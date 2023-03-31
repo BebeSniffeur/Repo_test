@@ -2,14 +2,14 @@ name: My Workflow
 on:
   push:
     branches-ignore:
-      - 'ga-ignore-*'
+      - 'ga-ignore-'
   pull_request:
     branches-ignore:
-      - 'ga-ignore-*'
+      - 'ga-ignore-'
 
 env:
-  MIRROR_URL: 'https://github.com/EpitechPromo2027/B-DOP-200-LYN-2-1-bschocolatine-gatien.rittner.git'
-  EXECUTABLES: 'pushswap,lib/my/libmy.a'
+  MIRROR_URL: "git@github.com:EpitechPromo2027/B-DOP-200-LYN-2-1-chocolatine-leo.bauduin.git"
+  EXECUTABLES: "mysh"
 
 jobs:
   check_coding_style:
@@ -18,28 +18,29 @@ jobs:
       image: ghcr.io/epitech/coding-style-checker:latest
     steps:
       - name: Check Coding Style
-        run: check.sh $(pwd) $(pwd)
-        continue-on-error: true
-      - name: Display Annotations
-        uses: "msoedov/github-actions-annotate-build@v1"
-        with:
-          path: '.'
-          file_regex: '\.c$|\.h$'
-      - name: Fail on Error
-        run: 'echo "Coding style errors detected!" && exit 1'
-        if: ${{ steps.display_annotations.outputs.errors > 0 }}
+        run: |
+          check.sh $(pwd) $(pwd)
+          if [[ -s coding-style-reports.log ]];
+          then
+            echo "Coding style errors detected :";
+            cat coding-style-reports.log;
+            exit 1;
+          else
+            echo "No coding style detected";
+            exit 0
+          fi
 
   check_program_compilation:
     runs-on: ubuntu-latest
     container:
-      image: epitechcontent/epitest-docker
-    timeout-minutes: 2
+      image: epitechcontent/epitest-docker:latest
     needs: check_coding_style
+
     steps:
+      - uses: actions/checkout@v3
       - name: Build
         run: make
-      - name: Clean
-        run: make clean
+        timeout-minutes: 2
       - name: Verify Executables
         run: |
           for exe in $(echo "$EXECUTABLES" | tr ',' ' '); do
@@ -48,30 +49,31 @@ jobs:
               exit 1
             fi
           done
+      - name: Clean
+        run: make clean
 
   run_tests:
+    needs: check_program_compilation
     runs-on: ubuntu-latest
     container:
-      image: epitechcontent/epitest-docker
+      image: epitechcontent/epitest-docker:latest
     timeout-minutes: 2
-    needs: check_program_compilation
     steps:
       - name: Run Tests
         run: make tests_run
 
   push_to_mirror:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
     needs: run_tests
-    env:
-      GIT_SSH_PRIVATE_KEY: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
+    runs-on: ubuntu-latest
     steps:
-      - name: Push to Mirror
-        uses: appleboy/ssh-action@master
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
-          host: example.com
-          username: myuser
-          key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            git push "$MIRROR_URL" HEAD:main
+          fetch-depth: 0
+      - name: Mirror repository
+        uses: pixta-dev/repository-mirroring-action@v1.1.1
+        with:
+          target_repo_url:
+            ${{ env.MIRROR_URL }}
+          ssh_private_key:
+            ${{ secrets.GIT_SSH_PRIVATE_KEY }}
