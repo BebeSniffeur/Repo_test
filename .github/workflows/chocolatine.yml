@@ -60,6 +60,7 @@ jobs:
     timeout-minutes: 2
     steps:
       - name: Run Tests
+        uses: actions/checkout@v3
         run: make tests_run
 
   push_to_mirror:
