@@ -26,7 +26,7 @@ jobs:
           do
             IFS=':'
             read -ra arr <<< "$line"
-            echo "::error file=${arr[0]#./},title=${arr[2]#./} coding style error: ${arr[1]#./}::${arr[3]#./}"
+            echo "::warning file=${arr[0]}, title=${arr[2]}, line=${arr[1]}, col=0, coding style error: ${arr[1]}::${arr[3]}"
           done  
           IFS=$old_IFS
           if [[ -n coding-style-reports.log ]]
