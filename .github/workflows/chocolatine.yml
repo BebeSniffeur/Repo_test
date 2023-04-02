@@ -1,11 +1,11 @@
-name: My Workflow
+name: Pain_au_chocolat-Epitech
 on:
   push:
     branches-ignore:
-      - 'ga-ignore-'
+    - "ga-ignore-*"
   pull_request:
     branches-ignore:
-      - 'ga-ignore-'
+    - "ga-ignore-*"
 
 env:
   MIRROR_URL: "git@github.com:BebeSniffeur/mirroring_test.git"
@@ -14,34 +14,32 @@ env:
 jobs:
   check_coding_style:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/epitech/coding-style-checker:latest
+    container: ghcr.io/epitech/coding-style-checker:latest
     steps:
       - name: Check Coding Style
         run: |
-          check.sh $(pwd) $(pwd)
-          echo "::warning file=app.js,line=1,col=5,endColumn=7::Missing semicolon"
-          if [[ -s coding-style-reports.log ]];
+          run: |
+          CODING_STYLE_ERRORS=$(check.sh $(pwd) $(pwd))
+          for ERRORS in $CODING_STYLE_ERRORS; do
+            array=("echo $ERRORS | sed 's/:/\n/g'")
+            echo "::error file=${array[1]#./},title=${array[3]#./} coding style error: ${array[2]#./}::${array[4]#./}"
+          done
+          if [[ -n $CODING_STYLE_ERRORS ]]
           then
-            echo "Coding style errors detected :";
-            cat coding-style-reports.log;
-            exit 1;
+            exit 1
           else
-            echo "No coding style detected";
-            exit 0
+            echo No coding style errors detected
           fi
 
   check_program_compilation:
     runs-on: ubuntu-latest
-    container:
-      image: epitechcontent/epitest-docker:latest
+    container: epitechcontent/epitest-docker:latest
     needs: check_coding_style
-
+    timeout-minutes: 2
     steps:
       - uses: actions/checkout@v3
       - name: Build
         run: make
-        timeout-minutes: 2
       - name: Verify Executables
         run: |
           for exe in $(echo "$EXECUTABLES" | tr ',' ' '); do
@@ -56,8 +54,7 @@ jobs:
   run_tests:
     needs: check_program_compilation
     runs-on: ubuntu-latest
-    container:
-      image: epitechcontent/epitest-docker:latest
+    container: epitechcontent/epitest-docker:latest
     timeout-minutes: 2
     steps:
       - uses: actions/checkout@v3
@@ -66,6 +63,7 @@ jobs:
 
   push_to_mirror:
     needs: run_tests
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
