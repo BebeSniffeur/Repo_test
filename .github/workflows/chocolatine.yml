@@ -23,7 +23,8 @@ jobs:
           old_IFS=$IFS
           IFS=$'\n'
           for line in $(cat coding-style-reports.log)  
-          do  
+          do
+            echo $line | sed 's/:/\n/g'
             array=(`echo $line | sed 's/:/\n/g'`)
             echo "::error file=${array[1]#./},title=${array[3]#./} coding style errors detected: ${array[2]#./}::${array[4]#./}"
           done  
