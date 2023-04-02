@@ -20,7 +20,7 @@ jobs:
       - name: Check Coding Style
         run: |
           CODING_STYLE_ERRORS=$(check.sh $(pwd) $(pwd))
-          echo CODING_STYLE_ERRORS
+          echo $CODING_STYLE_ERRORS
           cat coding-style-reports.log
           for ERRORS in $CODING_STYLE_ERRORS; do
             array=(`echo $ERRORS | sed 's/:/\n/g'`)
