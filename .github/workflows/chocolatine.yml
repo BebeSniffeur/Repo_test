@@ -24,9 +24,9 @@ jobs:
           IFS=$'\n'
           for line in $(cat coding-style-reports.log)  
           do
-            echo $line | sed 's/:/\n/g'
-            array=(`echo $line | sed 's/:/\n/g'`)
-            echo "::error file=${array[1]#./},title=${array[3]#./} coding style errors detected: ${array[2]#./}::${array[4]#./}"
+            IFS=':'
+            read -ra arr <<< "$line"
+            echo "::error file=${arr[0]#./},title=${arr[3]#./} coding style errors detected: ${arr[2]#./}::${arr[1]#./}"
           done  
           IFS=$old_IFS
           if [[ -n coding-style-reports.log ]]
