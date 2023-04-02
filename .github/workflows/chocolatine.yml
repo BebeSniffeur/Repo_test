@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/epitech/coding-style-checker:latest
     steps:
+      - uses: actions/checkout@v3
       - name: Check Coding Style
         run: |
           CODING_STYLE_ERRORS=$(check.sh $(pwd) $(pwd))
