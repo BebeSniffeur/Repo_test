@@ -32,7 +32,7 @@ int	main(int ac, char *          av[], char *              env[])
 
     if (isatty(STDIN_FILENO)) {
         get_str_prompt(&global);
-        my_printf("~%s leo $> ", global.prompt);
+        my_printf("~%s lea leoa cczb $> ", global.prompt);
     }
 
 
