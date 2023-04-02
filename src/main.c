@@ -32,10 +32,10 @@ int	main(int ac, char *          av[], char *              env[])
 
     if (isatty(STDIN_FILENO)) {
         get_str_prompt(&global);
-        my_printf("~%s $> ", global.prompt);
+        my_printf("~%s leo $> ", global.prompt);
     }
 
-                    
+
     mysh(&global);
     if (isatty(STDIN_FILENO))
         my_printf("Good Bye %s !\n", global.name);
