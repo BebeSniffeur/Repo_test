@@ -22,7 +22,7 @@ jobs:
           check.sh $(pwd) $(pwd)
           old_IFS=$IFS
           IFS=$'\n'
-          for ligne in $(cat fichier)  
+          for ligne in $(cat coding-style-reports.log)  
           do  
             echo "new_line"
             echo $ligne
