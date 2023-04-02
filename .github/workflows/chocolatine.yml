@@ -18,7 +18,6 @@ jobs:
     steps:
       - name: Check Coding Style
         run: |
-          run: |
           CODING_STYLE_ERRORS=$(check.sh $(pwd) $(pwd))
           for ERRORS in $CODING_STYLE_ERRORS; do
             array=("echo $ERRORS | sed 's/:/\n/g'")
