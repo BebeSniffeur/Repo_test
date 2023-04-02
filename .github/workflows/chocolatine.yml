@@ -22,13 +22,13 @@ jobs:
           check.sh $(pwd) $(pwd)
           old_IFS=$IFS
           IFS=$'\n'
-          for ligne in $(cat coding-style-reports.log)  
+          for line in $(cat coding-style-reports.log)  
           do  
-            echo "new_line"
-            echo $ligne
+            array=(`echo $line | sed 's/:/\n/g'`)
+            echo "::error file=${array[1]#./},title=${array[3]#./} coding style errors detected: ${array[2]#./}::${array[4]#./}"
           done  
           IFS=$old_IFS
-          if [[ -n $CODING_STYLE_ERRORS ]]
+          if [[ -n coding-style-reports.log ]]
           then
             exit 1
           else
