@@ -19,7 +19,7 @@ static int check_error(int ac, char **av) {
     return 0;
 }
 
-int	main(int ac, char *av[], char *env[])
+int main(int ac, char *av[], char *env[])
 {
     global_t global;
 
