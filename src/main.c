@@ -7,7 +7,8 @@
 
 #include "minishell2.h"
 
-static int check_error(int ac, char **av) {
+static int check_error(int ac, char **av)
+{
     if (ac == 2 && my_strcmp(av[1], "-h") == 0) {
         my_printf("USAGE : ./mysh\n");
         return 0;
