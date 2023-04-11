@@ -7,7 +7,7 @@
 
 #include "minishell2.h"
 
-static int check_error(int ac, char *      *            av) {
+static int check_error(int ac, char **av) {
     if (ac == 2 && my_strcmp(av[1], "-h") == 0) {
         my_printf("USAGE : ./mysh\n");
         return 0;
@@ -19,14 +19,11 @@ static int check_error(int ac, char *      *            av) {
     return 0;
 }
 
-int	main(int ac, char *          av[], char *              env[])
+int	main(int ac, char *av[], char *env[])
 {
     global_t global;
 
     if (check_error(ac, av))
-
-
-
         return 84;
     init_global(&global, env);
 
@@ -34,8 +31,6 @@ int	main(int ac, char *          av[], char *              env[])
         get_str_prompt(&global);
         my_printf("~%s lea leoa cczb $> ", global.prompt);
     }
-
-
     mysh(&global);
     if (isatty(STDIN_FILENO))
         my_printf("Good Bye %s !\n", global.name);
